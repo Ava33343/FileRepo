@@ -9,14 +9,18 @@ public class RepoScanner extends JFrame implements ActionListener {
 
    private JTextArea textArea = new JTextArea();
    private JButton read = new JButton("Open File");
+   
+   // Option to add a user specified filed to the application
    private JButton write = new JButton("Save File");
+   
    private JTextField nameField = new JTextField(20);
    private JLabel file = new JLabel("File Name");
+   
    private JPanel innerWindow =  new JPanel();
 
    public RepoScanner(){
 
-        super("RepoScanner - The Superfantastic Text Editor");
+        super("File Manager Just for You");
 
         // layout of the user interface
         innerWindow.setLayout(new GridLayout(2,2,1,1));
@@ -60,9 +64,10 @@ public class RepoScanner extends JFrame implements ActionListener {
    }//end main
 
    //reads from a text file.  Eclipse will look for it at the Project Folder
-   private void readTextFile(JTextArea textArea, String fileName) {
+   private void readTextFile(JTextArea textArea, String fileName) throws IOException {
 
        try {
+    	   
            BufferedReader inStream // Create and
                    = new BufferedReader(new FileReader(fileName));
 
@@ -108,15 +113,65 @@ public class RepoScanner extends JFrame implements ActionListener {
 
         if (evt.getSource() == read) {
             textArea.setText("");
-            readTextFile(textArea, fileName);
+            try {
+				readTextFile(textArea, fileName);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
             
         } else {
             writeTextFile(textArea, fileName);
         }
    }//end actionPerformed()
+   
+   /*
+    TODO
+    Connect to the existing UI 
+    Create a new directory if not existed and recreate again if exist;
+    */
+   private File createFile(String path, String fileName) throws IOException {
+       ClassLoader classLoader = getClass().getClassLoader();
+       File file = new File(classLoader.getResource(".").getFile() + path + fileName);
+
+       // Lets create the directory
+       try {
+          file.getParentFile().mkdir();
+       } catch (Exception err){
+           System.out.println("ERROR (Directory Create)" + err.getMessage());
+       }
+
+       // Lets create the file if we have credential
+       try {
+           file.createNewFile();
+       } catch (Exception err){
+           System.out.println("ERROR (File Create)" + err.getMessage());
+       }
+       return  file;
+   }
 
 }//end class
 
+/*
+TODO backlog
+Need to input file into a specified directory
+"//Users//ava//OneDrive//github//java//FileRepo//Repo"
+instead of the current folder, i.e. its parent folder
+"//Users//ava//OneDrive//github//java//FileRepo"
+*/
+
+/*
+ TODO backlog
+ Optimize using binary search algorithm to reduce the time complexity 
+ from the current linear O(N) to O(log(N))
+ whereas N represents the number of files
+ */
+
+/*
+TODO backlog
+Add file deletion button and associated function in a class 
+that extends file reader function of RepoScanner class
+*/
 
 
 /* 
